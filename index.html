@@ -6,6 +6,9 @@
   <title>Student Result Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- Added SweetAlert2 & html2pdf.js -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -21,11 +24,11 @@
   </button>
 
   <!-- Search Card -->
-  <div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
-    <div class="bg-blue-600 dark:bg-blue-700 p-6 text-center text-white">
+  <div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden" id="appContainer">
+    <div class="bg-blue-600 dark:bg-blue-700 p-6 text-center text-white" id="headerSection">
       <i class="ph ph-graduation-cap text-5xl mb-2"></i>
       <h1 class="text-2xl font-bold">Exam Results</h1>
-      <p class="text-sm opacity-80">Enter your credentials to check your marks</p>
+      <p class="text-sm opacity-80" id="headerSubtitle">Enter your credentials to check your marks</p>
     </div>
     
     <div class="p-6">
@@ -46,20 +49,35 @@
         <p class="text-sm mt-2">Fetching records...</p>
       </div>
 
-      <!-- Result Display -->
-      <div id="resultBox" class="hidden mt-6 bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border dark:border-gray-600">
-        <div class="border-b dark:border-gray-600 pb-3 mb-3">
-          <h2 id="studentName" class="text-xl font-bold text-gray-900 dark:text-white"></h2>
-          <p class="text-sm text-gray-500 dark:text-gray-300">Reg No: <span id="displayReg"></span></p>
-        </div>
-        <div id="marksContainer" class="space-y-2">
-          <!-- Marks injected via JS -->
-        </div>
-        <div class="mt-4 pt-3 border-t dark:border-gray-600 text-right">
-          <p class="text-lg font-bold">Total: <span id="totalMarks" class="text-blue-600 dark:text-blue-400"></span></p>
-          <p class="text-sm font-semibold">Grade/Rank: <span id="finalGrade"></span></p>
+      <!-- Result Display (This specific div will be converted to PDF) -->
+      <div id="printableResult" class="hidden mt-6">
+        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border dark:border-gray-600">
+          <div class="border-b dark:border-gray-600 pb-3 mb-3">
+            <h2 id="studentName" class="text-xl font-bold text-gray-900 dark:text-white"></h2>
+            <p class="text-sm text-gray-500 dark:text-gray-300">Reg No: <span id="displayReg"></span> | Grade: <span id="displayGrade"></span></p>
+          </div>
+          
+          <div id="marksContainer" class="space-y-2 mb-3">
+            <!-- Marks injected via JS -->
+          </div>
+          
+          <div class="pt-3 border-t dark:border-gray-600 flex justify-between items-end">
+            <div>
+              <p class="text-xs text-gray-500 dark:text-gray-400">Attendance: <span id="displayAttendance"></span></p>
+              <p class="text-sm font-semibold mt-1">Class Rank: <span id="finalRank"></span></p>
+            </div>
+            <div class="text-right">
+              <p class="text-lg font-bold">Total: <span id="totalMarks" class="text-blue-600 dark:text-blue-400"></span></p>
+            </div>
+          </div>
         </div>
       </div>
+
+      <!-- PDF Download Button (Kept outside the printable area) -->
+      <button id="downloadPdfBtn" class="hidden mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition-colors flex justify-center items-center gap-2">
+        <i class="ph ph-download-simple"></i> Download PDF Result
+      </button>
+
     </div>
   </div>
 
